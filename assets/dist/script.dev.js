@@ -16,7 +16,8 @@ var slides = [{
 var banner = document.getElementById("banner");
 var leftarrow = document.getElementById("leftarrow");
 var rightarrow = document.getElementById("rightarrow");
-var positionSlide = 0;
+var positionSlide = 0; // création des flèches de direction
+
 leftarrow.addEventListener("mousedown", function (event) {
   return slideArrow(event, -1);
 });
@@ -44,28 +45,26 @@ function slideArrow(event, direction) {
   }
 
   refreshSlide();
-}
+} // création des boutons dots
 
-for (var i = 0; i < slides.length; i++) {
+
+var _loop = function _loop(i) {
   var new_btn = document.createElement("button");
-  banner.appendChild(new_btn);
-  new_btn.setAttribute("id", "dot" + i);
+  banner.appendChild(new_btn); // new_btn.setAttribute("id", "dot" + i); // inutilisé, sadly
+
   new_btn.setAttribute("class", "dot");
   new_btn.addEventListener("click", function (event) {
-    refreshSlide(newbtn); // let btns = document.querySelectorAll(".dot");
-    // btns.forEach( (button) => button.classList.remove("dot_selected") )
-    // this.classList.add("dot_selected");
-    // let tagLine = document.querySelector("#banner p");
-    // tagLine.innerHTML = slides[i].tagLine;
-    // let image = document.querySelector(".banner-img");
-    // image.setAttribute("src", `./assets/images/slideshow/${slides[i].image}`);
+    positionSlide = i;
+    refreshSlide();
   });
+};
+
+for (var i = 0; i < slides.length; i++) {
+  _loop(i);
 }
 
-;
-
 function refreshSlide() {
-  // console.log(" pos " + positionSlide);
+  // A chaque refresh on recheck TOUTES les classes dot
   var btns = document.querySelectorAll(".dot");
   btns.forEach(function (button, index) {
     if (positionSlide == index) {
@@ -79,3 +78,5 @@ function refreshSlide() {
   var image = document.querySelector(".banner-img");
   image.setAttribute("src", "./assets/images/slideshow/".concat(slides[positionSlide].image));
 }
+
+refreshSlide();
