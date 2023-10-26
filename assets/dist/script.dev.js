@@ -1,5 +1,10 @@
 "use strict";
 
+/* jshint esversion: 6 */
+
+/* jshint -W083 */
+
+/* hide du warning: Functions declared within loops referencing an outer scoped variable may lead to confusing semantics. (new_btn, positionSlide, refreshSlide) */
 var slides = [{
   "image": "slide1.jpg",
   "tagLine": "Impressions tous formats <span>en boutique et en ligne</span>"
@@ -13,7 +18,6 @@ var slides = [{
   "image": "slide4.png",
   "tagLine": "Autocollants <span>avec découpe laser sur mesure</span>"
 }];
-var banner = document.getElementById("banner");
 var leftarrow = document.getElementById("leftarrow");
 var rightarrow = document.getElementById("rightarrow");
 var positionSlide = 0; // création des flèches de direction
@@ -49,22 +53,31 @@ function slideArrow(event, direction) {
 
 
 var _loop = function _loop(i) {
-  var new_btn = document.createElement("button");
-  banner.appendChild(new_btn); // new_btn.setAttribute("id", "dot" + i); // inutilisé, sadly
-
+  var dots = document.querySelector(".dots");
+  dots.style.gap = "10px";
+  var new_btn = document.createElement("div");
+  dots.appendChild(new_btn);
   new_btn.setAttribute("class", "dot");
-  new_btn.addEventListener("click", function (event) {
-    positionSlide = i;
-    refreshSlide();
-  });
+  /* astuce pour calmer sshint qui n'aime pas l'utilisation du i de for
+       dans une fonction interne ( problème Possible de portée )
+     i est donc passé en arg à la fonction */
+
+  (function (index) {
+    // déclaration
+    new_btn.addEventListener("click", function (event) {
+      positionSlide = index;
+      refreshSlide();
+    });
+  })(i); // call direct en passant i
+
 };
 
 for (var i = 0; i < slides.length; i++) {
   _loop(i);
-}
+} // Refresh de tous les éléments de la banner
+
 
 function refreshSlide() {
-  // A chaque refresh on recheck TOUTES les classes dot
   var btns = document.querySelectorAll(".dot");
   btns.forEach(function (button, index) {
     if (positionSlide == index) {

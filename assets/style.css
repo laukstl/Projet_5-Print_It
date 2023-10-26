@@ -139,7 +139,7 @@ header {
 	display: flex;
 }
 .dot {
-	margin-inline: 5px;
+	/* margin-inline: 5px; */
 	width: 13px;
 	height: 13px;
 	background-color: #ffffff00;

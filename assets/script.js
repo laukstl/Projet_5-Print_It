@@ -1,3 +1,8 @@
+/* jshint esversion: 6 */
+
+/* jshint -W083 */
+/* hide du warning: Functions declared within loops referencing an outer scoped variable may lead to confusing semantics. (new_btn, positionSlide, refreshSlide) */
+
 const slides = [
 	{
 		"image":"slide1.jpg",
@@ -15,9 +20,8 @@ const slides = [
 		"image":"slide4.png",
 		"tagLine":"Autocollants <span>avec découpe laser sur mesure</span>"
 	}
-]
+];
 
-let banner = document.getElementById("banner");
 let leftarrow = document.getElementById("leftarrow");
 let rightarrow = document.getElementById("rightarrow");
 
@@ -39,34 +43,41 @@ function slideArrow(event, direction) {
 			break;
 	}
 
-	if ( positionSlide > slides.length-1 ) { positionSlide = 0 }
-	else if ( positionSlide < 0 ) { positionSlide = slides.length - 1 }
+	if ( positionSlide > slides.length-1 ) { positionSlide = 0; }
+	else if ( positionSlide < 0 ) { positionSlide = slides.length - 1; }
 
 	refreshSlide();
 }
 
 // création des boutons dots
 for ( let i=0; i<slides.length; i++ ) {
-	let new_btn = document.createElement("button");
-	banner.appendChild(new_btn);
-	// new_btn.setAttribute("id", "dot" + i); // inutilisé, sadly
+	let dots = document.querySelector(".dots");
+	dots.style.gap = "10px";
+
+	let new_btn = document.createElement("div");
+
+	dots.appendChild(new_btn);
 	new_btn.setAttribute("class", "dot");
 
-	new_btn.addEventListener("click", function(event) {
-		positionSlide = i;
-
-		refreshSlide()
-	});
+	/* astuce pour calmer sshint qui n'aime pas l'utilisation du i de for
+	     dans une fonction interne ( problème Possible de portée )
+	   i est donc passé en arg à la fonction */
+    (function (index) { // déclaration
+        new_btn.addEventListener("click", function (event) {
+            positionSlide = index;
+            refreshSlide();
+        });
+    })(i); // call direct en passant i
 }
 
+// Refresh de tous les éléments de la banner
 function refreshSlide() {
-	// A chaque refresh on recheck TOUTES les classes dot
 	let btns = document.querySelectorAll(".dot");
 	btns.forEach( (button, index) => {
 		if ( positionSlide == index ) { button.classList.add("dot_selected"); }
 		else { button.classList.remove("dot_selected"); }
 	}
-	)
+	);
 
 	let tagLine = document.querySelector("#banner p");
 	tagLine.innerHTML = slides[positionSlide].tagLine;
@@ -75,4 +86,4 @@ function refreshSlide() {
 	image.setAttribute("src", `./assets/images/slideshow/${slides[positionSlide].image}`);
 }
 
-refreshSlide()
+refreshSlide();
